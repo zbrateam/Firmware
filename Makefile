@@ -26,12 +26,20 @@ CFLAGS				+= -m$(TARGET_PLATFORM)-version-min=$(TARGET_VERSION)
 all:: main.m Firmware.m DeviceInfo.m
 	$(CC) $(CFLAGS) -fobjc-arc -DMAINTAINER='@"$(FIRMWARE_MAINTAINER)"' main.m Firmware.m DeviceInfo.m -o firmware -I. -framework Foundation -O3
 	$(STRIP) firmware
+	$(LDID) -Sentitlements.plist firmware
+	$(FAKEROOT) chmod 755 firmware
 
 install::
 	mkdir -p $(DESTDIR)
-	cp firmware $(DESTDIR)
-	$(LDID) -Sentitlements.plist $(DESTDIR)/firmware
-	$(FAKEROOT) chmod 755 $(DESTDIR)/firmware
+	cp -a firmware $(DESTDIR)
 
 clean::
 	rm -rf firmware out
+
+
+# theos subproject compatibilty
+internal-stage:: install
+	@:
+
+internal-after-install::
+	@:
