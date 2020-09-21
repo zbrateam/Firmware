@@ -23,18 +23,19 @@ endif
 CFLAGS				+= -m$(TARGET_PLATFORM)-version-min=$(TARGET_VERSION)
 
 
-all:: main.m Firmware.m DeviceInfo.m
-	$(CC) $(CFLAGS) -fobjc-arc -DMAINTAINER='@"$(FIRMWARE_MAINTAINER)"' main.m Firmware.m DeviceInfo.m -o firmware -I. -framework Foundation -O3
-	$(STRIP) firmware
-	$(LDID) -Sentitlements.plist firmware
-	$(FAKEROOT) chmod 755 firmware
+all:: src/*.m
+	mkdir -p build
+	$(CC) $(CFLAGS) -fobjc-arc -DMAINTAINER='@"$(FIRMWARE_MAINTAINER)"' src/*.m -o build/firmware -Ibuild -framework Foundation -O3
+	$(STRIP) build/firmware
+	$(LDID) -Sentitlements.plist build/firmware
+	$(FAKEROOT) chmod 755 build/firmware
 
 install::
 	mkdir -p $(DESTDIR)
-	cp -a firmware $(DESTDIR)
+	cp -a build/firmware $(DESTDIR)
 
 clean::
-	rm -rf firmware out
+	rm -rf firmware build out
 
 
 # theos subproject compatibilty
