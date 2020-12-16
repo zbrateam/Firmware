@@ -2,7 +2,7 @@
 
 #include <getopt.h>
 
-#define FIRMWARE_VERSION 6
+#define FIRMWARE_VERSION 7
 
 int main(int argc, char *argv[]) {
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    NSLog(@"[Firmware] full steam ahead");
+    DEBUGLOG(@"[Firmware] Full steam ahead.");
 
     Firmware *firmware = [[Firmware alloc] init];
     [firmware loadInstalledPackages];
@@ -59,17 +59,18 @@ int main(int argc, char *argv[]) {
 
     // generate always needed packages
 
-    NSString *iosVersion = [device getOperatingSystemVersion];
+    NSString *osVersion = [device getOperatingSystemVersion];
 
-    if (device.ios) {
-        [firmware generatePackage:@"firmware" forVersion:iosVersion withDescription:@"almost impressive Apple frameworks" andName:@"iOS Firmware"];
-    }
+    [firmware generatePackage:@"firmware" forVersion:osVersion withDescription:@"almost impressive Apple frameworks" andName:@"OS Firmware"];
 
     if (!nocy) {
         NSString *packageName = [@"cy+os." stringByAppendingString:[device getOperatingSystem]];
-        [firmware generatePackage:packageName forVersion:iosVersion withDescription:@"virtual operating system dependency"];
+        [firmware generatePackage:packageName forVersion:osVersion withDescription:@"virtual operating system dependency"];
 
         packageName = [@"cy+cpu." stringByAppendingString:device.cpuArchitecture];
+        [firmware generatePackage:packageName forVersion:@"0" withDescription:@"virtual CPU dependency"];
+
+        packageName = [@"cy+cpu." stringByAppendingString:device.cpuSubArchitecture];
         [firmware generatePackage:packageName forVersion:@"0" withDescription:@"virtual CPU dependency"];
 
         packageName = [@"cy+model." stringByAppendingString:[device getModelName]];
@@ -84,21 +85,21 @@ int main(int argc, char *argv[]) {
 
     [firmware writePackagesToStatusFile];
 
-    if (device.ios) {
-        [firmware setupUserSymbolicLink];
+#if (TARGET_OS_IPHONE)
+    [firmware setupUserSymbolicLink];
+#endif
 
-        // write firmware version
+    // write firmware version
 
-        NSError *error;
+    NSError *error;
 
-        NSString *firmwareFile = @"/var/lib/cydia/firmware.ver";
-        NSString *firwareVersion = [NSString stringWithFormat:@"%d\n", FIRMWARE_VERSION];
+    NSString *firmwareFile = [NSString stringWithFormat:@"%@/info/firmware.ver", device.getDPKGDataDirectory];
+    NSString *firwareVersion = [NSString stringWithFormat:@"%d\n", FIRMWARE_VERSION];
 
-        if (![firwareVersion writeToFile:firmwareFile atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
-            [firmware exitWithError:error andMessage:[NSString stringWithFormat:@"Error writing firmware version to %@", firmwareFile]];
-        }
+    if (![firwareVersion writeToFile:firmwareFile atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
+        [firmware exitWithError:error andMessage:[NSString stringWithFormat:@"Error writing firmware version to %@", firmwareFile]];
     }
 
-    NSLog(@"[Firmware] my work here is done");
+    DEBUGLOG(@"[Firmware] My work here is done.");
     return 0;
 }

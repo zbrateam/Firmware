@@ -11,6 +11,7 @@
     dispatch_once(&onceToken, ^{
         sharedInstance = [[DeviceInfo alloc] init];
         [sharedInstance initCpuArchitecture];
+        [sharedInstance initCpuSubArchitecture];
         uname(&(sharedInstance->_systemInfo));
         [sharedInstance initModel];
     });
@@ -40,15 +41,44 @@
     self->_cpuArchitecture = [NSString stringWithCString:cpu encoding:NSUTF8StringEncoding];
 
     NXFreeArchInfo(ai);
-
-    self->_ios = (type == CPU_TYPE_ARM || type == CPU_TYPE_ARM64);
 }
 
+- (void)initCpuSubArchitecture {
+    cpu_subtype_t subtype;
+    size_t size = sizeof(subtype);
+
+    char *cpu = NULL;
+    if (sysctlbyname("hw.cpusubtype", &subtype, &size, NULL, 0) == 0) {
+        if (subtype == CPU_SUBTYPE_ARM_V6) {
+            cpu = "armv6";
+        } else if (subtype == CPU_SUBTYPE_ARM_V7) {
+            cpu = "armv7";
+        } else if (subtype == CPU_SUBTYPE_ARM_V7S) {
+            cpu = "armv7s";
+        } else if (subtype == CPU_SUBTYPE_ARM_V7K) {
+            cpu = "armv7k";
+        } else if (subtype == CPU_SUBTYPE_ARM64_ALL) {
+            cpu = "arm64";
+        } else if (subtype == CPU_SUBTYPE_ARM64_V8) {
+            cpu = "arm64v8";
+        } else if (subtype == CPU_SUBTYPE_ARM64E) {
+            cpu = "arm64e";
+        } else if (subtype == CPU_SUBTYPE_X86_64_ALL) {
+            cpu = "x86_64";
+        } else {
+            [self exitWithError:nil andMessage:@"Unknown cpu sub-architecture"];
+        }
+    } else {
+        [self exitWithError:nil andMessage:@"Error getting cpu sub-architecture"];
+    }
+
+    self->_cpuSubArchitecture = [NSString stringWithCString:cpu encoding:NSUTF8StringEncoding];
+}
 
 - (void)initModel {
-    if (self->_ios) {
+#if (TARGET_OS_IPHONE)
         self->_model = [NSString stringWithCString:self->_systemInfo.machine encoding:NSUTF8StringEncoding];
-    } else {
+#else
         size_t size;
         char *model;
 
@@ -58,7 +88,7 @@
 
         self->_model = [NSString stringWithCString:model encoding:NSUTF8StringEncoding];
         free(model);
-    }
+#endif
 }
 
 - (NSRegularExpression *)regexWithPattern:(NSString *)pattern {
@@ -74,11 +104,8 @@
 
 - (NSString *)getOperatingSystemVersion {
     NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
-    NSMutableString *versionString = [NSMutableString stringWithFormat:@"%d.%d", (int)version.majorVersion, (int)version.minorVersion];
-    if (version.patchVersion != 0) {
-        [versionString appendFormat:@".%d", (int)version.patchVersion];
-    }
-    return (NSString *)versionString;
+    NSString *versionString = [NSString stringWithFormat:@"%d.%d.%d", (int)version.majorVersion, (int)version.minorVersion, (int)version.patchVersion];
+    return versionString;
 }
 
 - (NSString *)getModelName {
@@ -98,15 +125,36 @@
 }
 
 - (NSString *)getDebianArchitecture {
-    return self->_ios ? @"iphoneos-arm" : @"cydia";
+#if (TARGET_OS_IOS)
+    return @"iphoneos-arm";
+#elif (TARGET_OS_TV)
+    return @"appletvos-arm";
+#elif (TARGET_OS_WATCH)
+    return @"watchos-arm";
+#elif (TARGET_OS_OSX)
+    return @"darwin-arm64e";
+#else
+    return @"unknown";
+#endif
 }
 
 - (NSString *)getOperatingSystem {
-    return self->_ios ? @"ios" : @"macosx";
+#if (TARGET_OS_IOS)
+    return @"iphoneos";
+#elif (TARGET_OS_TV)
+    return @"appletvos";
+#elif (TARGET_OS_WATCH)
+    return @"watchos";
+#elif (TARGET_OS_OSX) 
+    return @"macos";
+#else
+    return @"unknown";
+#endif
 }
 
 - (NSString *)getDPKGDataDirectory {
-    return self->_ios ? @"/var/lib/dpkg" : @"/var/lib/dpkg";
+    // TODO: This (and a lotta other parts of this code) should detect install prefix.
+    return @"/var/lib/dpkg";
 }
 
 - (NSDictionary *)getCapabilities {
