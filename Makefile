@@ -13,15 +13,18 @@ TARGET_ARCH			?= arm64
 TARGET_SYSROOT		?= $(shell xcrun --sdk $(TARGET_PLATFORM) --show-sdk-path)
 
 ifeq (,$(findstring -arch ,$(CFLAGS)))
-	CFLAGS			+= -arch $(TARGET_ARCH)
+CFLAGS += -arch $(TARGET_ARCH)
 endif
 
 ifeq (,$(findstring -isysroot ,$(CFLAGS)))
-	CFLAGS			+= -isysroot $(TARGET_SYSROOT)
+CFLAGS += -isysroot $(TARGET_SYSROOT)
 endif
 
-CFLAGS				+= -m$(TARGET_PLATFORM)-version-min=$(TARGET_VERSION)
+CFLAGS += -m$(TARGET_PLATFORM)-version-min=$(TARGET_VERSION)
 
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG
+endif
 
 all:: src/*.m
 	mkdir -p build
