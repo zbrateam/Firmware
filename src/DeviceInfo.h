@@ -10,11 +10,11 @@
 #import <sys/types.h>
 
 #ifndef PREFIX
-    #define PREFIX @"/"
+    #define PREFIX @""
 #endif
 
 #ifndef EXECPREFIX
-    #define EXECPREFIX @"usr/"
+    #define EXECPREFIX @"usr"
 #endif
 
 @interface DeviceInfo : NSObject

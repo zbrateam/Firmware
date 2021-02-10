@@ -154,13 +154,13 @@
 
 - (NSString *)getDPKGDataDirectory {
     // TODO: This (and a lotta other parts of this code) should detect install prefix.
-    return [NSString stringWithFormat:@"%@var/lib/dpkg", PREFIX];
+    return [NSString stringWithFormat:@"/%@/var/lib/dpkg", PREFIX];
 }
 
 - (NSDictionary *)getCapabilities {
     NSTask *task = [[NSTask alloc] init];
     
-    [task setLaunchPath:[NSString stringWithFormat:@"%@%@bin/gssc", PREFIX, EXECPREFIX]];
+    [task setLaunchPath:[NSString stringWithFormat:@"/%@/%@/bin/gssc", PREFIX, EXECPREFIX]];
 
     NSPipe *outPipe = [NSPipe pipe];
     [task setStandardOutput:outPipe];

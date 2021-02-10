@@ -6,8 +6,8 @@ LDID				?= ldid
 DESTDIR				?= out
 
 FIRMWARE_MAINTAINER	?= Zebra Team
-PREFIX                  ?= /
-EXECPREFIX              ?= usr/
+PREFIX                  ?=
+EXECPREFIX              ?= usr
 
 TARGET_PLATFORM		?= iphoneos
 TARGET_VERSION		?= 11.0
