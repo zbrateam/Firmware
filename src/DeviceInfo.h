@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE
 #import "NSTask.h"
+#endif
 
 #import <mach-o/arch.h>
 #import <sys/sysctl.h>
