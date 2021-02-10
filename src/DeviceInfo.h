@@ -1,11 +1,21 @@
 #import <Foundation/Foundation.h>
+#if TARGET_OS_IPHONE
 #import "NSTask.h"
+#endif
 
 #import <mach-o/arch.h>
 #import <sys/sysctl.h>
 
 #import <sys/utsname.h>
 #import <sys/types.h>
+
+#ifndef PREFIX
+    #define PREFIX @""
+#endif
+
+#ifndef EXECPREFIX
+    #define EXECPREFIX @"usr"
+#endif
 
 @interface DeviceInfo : NSObject
 
