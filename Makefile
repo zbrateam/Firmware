@@ -6,6 +6,8 @@ LDID				?= ldid
 DESTDIR				?= out
 
 FIRMWARE_MAINTAINER	?= Zebra Team
+PREFIX                  ?= /
+EXECPREFIX              ?= usr/
 
 TARGET_PLATFORM		?= iphoneos
 TARGET_VERSION		?= 11.0
@@ -28,7 +30,7 @@ endif
 
 all:: src/*.m
 	mkdir -p build
-	$(CC) $(CFLAGS) -fobjc-arc -DMAINTAINER='@"$(FIRMWARE_MAINTAINER)"' src/*.m -o build/firmware -Ibuild -framework Foundation -O3
+	$(CC) $(CFLAGS) -fobjc-arc -DMAINTAINER='@"$(FIRMWARE_MAINTAINER)"' -DPREFIX='@"$(PREFIX)"' -DEXECPREFIX='@"$(EXECPREFIX)"' src/*.m -o build/firmware -Ibuild -framework Foundation -O3
 	$(STRIP) build/firmware
 	$(LDID) -Sentitlements.plist build/firmware
 	$(FAKEROOT) chmod 755 build/firmware

@@ -9,6 +9,14 @@
 #import <sys/utsname.h>
 #import <sys/types.h>
 
+#ifndef PREFIX
+    #define PREFIX @"/"
+#endif
+
+#ifndef EXECPREFIX
+    #define EXECPREFIX @"usr/"
+#endif
+
 @interface DeviceInfo : NSObject
 
 + (instancetype)sharedDevice;
