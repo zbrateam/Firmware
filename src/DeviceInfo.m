@@ -125,17 +125,7 @@
 }
 
 - (NSString *)getDebianArchitecture {
-#if (TARGET_OS_IOS)
-    return @"iphoneos-arm";
-#elif (TARGET_OS_TV)
-    return @"appletvos-arm";
-#elif (TARGET_OS_WATCH)
-    return @"watchos-arm";
-#elif (TARGET_OS_OSX)
-    return @"darwin-arm64e";
-#else
-    return @"unknown";
-#endif
+    return @"all";
 }
 
 - (NSString *)getOperatingSystem {
