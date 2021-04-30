@@ -66,7 +66,7 @@
         } else if (subtype == CPU_SUBTYPE_X86_64_ALL) {
             cpu = "x86_64";
         } else {
-            [self exitWithError:nil andMessage:@"Unknown cpu sub-architecture"];
+            cpu = "Unknown";
         }
     } else {
         [self exitWithError:nil andMessage:@"Error getting cpu sub-architecture"];
