@@ -53,8 +53,10 @@ int main(int argc, char *argv[]) {
 
     // generate device specific packages
 
+#if (TARGET_OS_IPHONE)
     if (!nogsc)
         [firmware generateCapabilityPackages];
+#endif
 
 
     // generate always needed packages
@@ -63,6 +65,7 @@ int main(int argc, char *argv[]) {
 
     [firmware generatePackage:@"firmware" forVersion:osVersion withDescription:@"almost impressive Apple frameworks" andName:@"OS Firmware"];
 
+#if (TARGET_OS_IPHONE)
     if (!nocy) {
         NSString *packageName = [@"cy+os." stringByAppendingString:[device getOperatingSystem]];
         [firmware generatePackage:packageName forVersion:osVersion withDescription:@"virtual operating system dependency"];
@@ -81,6 +84,7 @@ int main(int argc, char *argv[]) {
 
         [firmware generatePackage:@"cy+lib.corefoundation" forVersion:[device getCoreFoundationVersion] withDescription:@"virtual corefoundation dependency"];
     }
+#endif
 
 
     [firmware writePackagesToStatusFile];
