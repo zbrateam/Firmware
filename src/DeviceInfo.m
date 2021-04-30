@@ -104,7 +104,12 @@
 
 - (NSString *)getOperatingSystemVersion {
     NSOperatingSystemVersion version = [[NSProcessInfo processInfo] operatingSystemVersion];
-    NSString *versionString = [NSString stringWithFormat:@"%d.%d.%d", (int)version.majorVersion, (int)version.minorVersion, (int)version.patchVersion];
+    NSString *versionString;
+    if (version.patchVersion != 0) {
+        versionString = [NSString stringWithFormat:@"%d.%d.%d", (int)version.majorVersion, (int)version.minorVersion, (int)version.patchVersion];
+    } else {
+        versionString = [NSString stringWithFormat:@"%d.%d", (int)version.majorVersion, (int)version.minorVersion];
+    }
     return versionString;
 }
 
