@@ -49,24 +49,33 @@
 
     char *cpu = NULL;
     if (sysctlbyname("hw.cpusubtype", &subtype, &size, NULL, 0) == 0) {
-        if (subtype == CPU_SUBTYPE_ARM_V6) {
-            cpu = "armv6";
-        } else if (subtype == CPU_SUBTYPE_ARM_V7) {
-            cpu = "armv7";
-        } else if (subtype == CPU_SUBTYPE_ARM_V7S) {
-            cpu = "armv7s";
-        } else if (subtype == CPU_SUBTYPE_ARM_V7K) {
-            cpu = "armv7k";
-        } else if (subtype == CPU_SUBTYPE_ARM64_ALL) {
-            cpu = "arm64";
-        } else if (subtype == CPU_SUBTYPE_ARM64_V8) {
-            cpu = "arm64v8";
-        } else if (subtype == CPU_SUBTYPE_ARM64E) {
-            cpu = "arm64e";
-        } else if (subtype == CPU_SUBTYPE_X86_64_ALL) {
-            cpu = "x86_64";
-        } else {
-            cpu = "Unknown";
+        switch (subtype) {
+            case CPU_SUBTYPE_ARM_V6:
+                cpu = "armv6";
+                break;
+            case CPU_SUBTYPE_ARM_V7:
+                cpu = "armv7";
+                break;
+            case CPU_SUBTYPE_ARM_V7S:
+                cpu = "armv7s";
+                break;
+            case CPU_SUBTYPE_ARM_V7K:
+                cpu = "armv7k";
+                break;
+            case CPU_SUBTYPE_ARM64_ALL:
+                cpu = "arm64";
+                break;
+            case CPU_SUBTYPE_ARM64_V8:
+                cpu = "arm64v8";
+                break;
+            case CPU_SUBTYPE_ARM64E:
+                cpu = "arm64e";
+                break;
+            case CPU_SUBTYPE_X86_64_ALL:
+                cpu = "x86_64";
+                break;
+            default:
+                cpu = "Unknown";
         }
     } else {
         [self exitWithError:nil andMessage:@"Error getting cpu sub-architecture"];
