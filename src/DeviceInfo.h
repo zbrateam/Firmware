@@ -1,7 +1,4 @@
 #import <Foundation/Foundation.h>
-#if TARGET_OS_IPHONE
-#import "NSTask.h"
-#endif
 
 #import <mach-o/arch.h>
 #import <sys/sysctl.h>
@@ -11,10 +8,6 @@
 
 #ifndef PREFIX
     #define PREFIX @""
-#endif
-
-#ifndef EXECPREFIX
-    #define EXECPREFIX @"usr"
 #endif
 
 @interface DeviceInfo : NSObject
@@ -30,7 +23,7 @@
 - (NSString *)getDebianArchitecture;        // *os-arm or darwin-arm64e
 - (NSString *)getOperatingSystem;           // *os
 - (NSString *)getDPKGDataDirectory;         // /var/lib/dpkg
-- (NSDictionary *)getCapabilities;          // filtered output of gssc to only include capabilites the device actually has
+- (NSDictionary *)getCapabilities;          // filtered mobile gestalt answers to only include capabilites the device actually has
 - (NSString *)getCoreFoundationVersion;     // e.g. 1674.11
 - (NSString *)getOperatingSystemType;       // e.g. Darwin
 - (NSString *)getOperatingSystemRelease;    // e.g. 19.3.0

@@ -1,4 +1,5 @@
 #import "DeviceInfo.h"
+#import "MobileGestalt.h"
 
 @implementation DeviceInfo {
     struct utsname _systemInfo;
@@ -162,52 +163,36 @@
 }
 
 - (NSDictionary *)getCapabilities {
-    NSTask *task = [[NSTask alloc] init];
-    
-    [task setLaunchPath:[NSString stringWithFormat:@"/%@/%@/bin/gssc", PREFIX, EXECPREFIX]];
-
-    NSPipe *outPipe = [NSPipe pipe];
-    [task setStandardOutput:outPipe];
-
-    [task launch];
-    [task waitUntilExit];
-
-    NSData *gsscData = [[outPipe fileHandleForReading] readDataToEndOfFile];
-
-    NSError *error;
-    NSDictionary *unfilteredCapabilities = [NSPropertyListSerialization propertyListWithData:gsscData options:NSPropertyListMutableContainersAndLeaves format:nil error:&error];
-
-    if (!unfilteredCapabilities) {
-        [self exitWithError:error andMessage:@"Error parsing device capabilites from GSSC"];
-    }
-
     NSRegularExpression *numberRegex = [self regexWithPattern:@"^[0-9]+$"];
     NSRegularExpression *uppercaseRegex = [self regexWithPattern:@"([A-Z])"];
 
-    NSMutableDictionary *capabilities = [[NSMutableDictionary alloc] init];
+    NSDictionary *gestaltAnswers = [[MobileGestalt new] gestaltAnswers];
+    NSMutableDictionary *capabilities = [NSMutableDictionary dictionaryWithCapacity:gestaltAnswers.count];
+    NSString *zero = @"0";
+    NSString *prefixString = @"-";
+    NSString *template = @"-$1";
 
-    for (NSString *name in unfilteredCapabilities) {
-        id value = [unfilteredCapabilities valueForKey:name];
+    for (NSString *name in gestaltAnswers) {
+        NSString *value = [gestaltAnswers valueForKey:name];
 
-        if ([value isKindOfClass:[NSString class]]
-            && ![(NSString *)value isEqual:@"0"]
+        if (![value isEqualToString:zero]
             && [numberRegex firstMatchInString:value options:0 range:NSMakeRange(0, [value length])]) {
 
             NSString *modifiedName = [[uppercaseRegex stringByReplacingMatchesInString:name
-                                                                              options:0
+                                                                                options:0
                                                                                 range:NSMakeRange(0, [name length])
-                                                                         withTemplate:@"-$1"]
-                                     lowercaseString];
+                                                                            withTemplate:template]
+                                        lowercaseString];
 
-            if ([modifiedName hasPrefix:@"-"]) {
+            if ([modifiedName hasPrefix:prefixString]) {
                 [capabilities setObject:value forKey:[modifiedName substringFromIndex:1]];
             } else {
                 [capabilities setObject:value forKey:modifiedName];
             }
         }
     }
-    
-    return (NSDictionary *)capabilities;
+
+    return capabilities;
 }
 
 - (NSString *)getCoreFoundationVersion {

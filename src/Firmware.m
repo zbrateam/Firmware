@@ -1,4 +1,5 @@
 #import "Firmware.h"
+#import "MobileGestalt.h"
 
 @implementation Firmware {
     NSString *_dataDirectory;
@@ -156,22 +157,21 @@
 }
 
 - (void)generateCapabilityPackages {
-    NSDictionary *capabilites = [self->_deviceInfo getCapabilities];
+    if ([MobileGestalt isIpad]) {
+        [self generatePackage:@"gsc.ipad" forVersion:@"1" withDescription:@"this device has a very large screen" andName:@"iPad"];
+        [self generatePackage:@"gsc.wildcat" forVersion:@"1" withDescription:@"this device has a very large screen" andName:@"iPad"];
+    }
 
     // generate packages for device capabilites
-    NSString *ipad = @"ipad";
+    NSDictionary *capabilites = [self->_deviceInfo getCapabilities];
+
     NSString *gsc = @"gsc.";
     NSString *standardDescription = @"virtual GraphicsServices dependency";
 
     for (NSString *name in capabilites) {
         NSString *packageVersion = [capabilites valueForKey:name];
 
-        if ([ipad isEqualToString:name]) {
-            [self generatePackage:@"gsc.ipad" forVersion:packageVersion withDescription:@"this device has a very large screen" andName:@"iPad"];
-            [self generatePackage:@"gsc.wildcat" forVersion:packageVersion withDescription:@"this device has a very large screen" andName:@"iPad"];
-        } else {
-            [self generatePackage:[gsc stringByAppendingString:name] forVersion:packageVersion withDescription:standardDescription];
-        }
+        [self generatePackage:[gsc stringByAppendingString:name] forVersion:packageVersion withDescription:standardDescription];
     }
 }
 
