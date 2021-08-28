@@ -29,7 +29,7 @@ endif
 
 all:: src/*.m
 	mkdir -p build
-	$(CC) $(CFLAGS) -fobjc-arc -DMAINTAINER='@"$(FIRMWARE_MAINTAINER)"' -DPREFIX='@"$(PREFIX)"' src/*.m -o build/firmware -Ibuild -framework Foundation -lMobileGestalt -O3
+	$(CC) -O3 -fobjc-arc $(CFLAGS) -Ibuild -DMAINTAINER='@"$(FIRMWARE_MAINTAINER)"' -DPREFIX='@"$(PREFIX)"' src/*.m -o build/firmware $(LDFLAGS) -framework Foundation -lMobileGestalt
 	$(STRIP) build/firmware
 	$(LDID) -Sentitlements.plist build/firmware
 	$(FAKEROOT) chmod 755 build/firmware
