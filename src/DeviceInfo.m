@@ -154,7 +154,6 @@
 }
 
 - (NSString *)getDPKGDataDirectory {
-    // TODO: This (and a lotta other parts of this code) should detect install prefix.
     return [NSString stringWithFormat:@"/%@/var/lib/dpkg", PREFIX];
 }
 

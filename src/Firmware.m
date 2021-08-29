@@ -190,8 +190,8 @@
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    NSString *userPath = @"/User";
-    NSString *varMobileDirectory = @"/var/mobile";
+    NSString *userPath = [NSString stringWithFormat:@"/%@/User", PREFIX];
+    NSString *varMobileDirectory = [NSString stringWithFormat:@"/%@/var/mobile", PREFIX];
 
     NSDictionary *userAttributes = [fileManager attributesOfItemAtPath:userPath error:nil];
 
@@ -201,9 +201,12 @@
     if (userAttributes && ![userAttributes.fileType isEqualToString:NSFileTypeSymbolicLink] && [userAttributes.fileType isEqualToString:NSFileTypeDirectory]) {
         pid_t pid;
         extern char **environ;
-        
+
+        NSString *prefixedCp = [NSString stringWithFormat:@"/%@/bin/cp", PREFIX];
+        char *cpPath = (char *) [[prefixedCp stringByReplacingOccurrencesOfString:@"//" withString:@"/"] UTF8String];
+
         char *argv[] = {
-            "/bin/cp",
+            cpPath,
             "-afT",
             (char *)[userPath UTF8String],
             (char *)[varMobileDirectory UTF8String],
