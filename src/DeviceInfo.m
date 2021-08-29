@@ -54,41 +54,41 @@
     cpu_subtype_t subtype;
     size_t size = sizeof(subtype);
 
-    char *cpu = NULL;
+    NSString *cpu;
     if (sysctlbyname("hw.cpusubtype", &subtype, &size, NULL, 0) == 0) {
         switch (subtype) {
             case CPU_SUBTYPE_ARM_V6:
-                cpu = "armv6";
+                cpu = @"armv6";
                 break;
             case CPU_SUBTYPE_ARM_V7:
-                cpu = "armv7";
+                cpu = @"armv7";
                 break;
             case CPU_SUBTYPE_ARM_V7S:
-                cpu = "armv7s";
+                cpu = @"armv7s";
                 break;
             case CPU_SUBTYPE_ARM_V7K:
-                cpu = "armv7k";
+                cpu = @"armv7k";
                 break;
             case CPU_SUBTYPE_ARM64_ALL:
-                cpu = "arm64";
+                cpu = @"arm64";
                 break;
             case CPU_SUBTYPE_ARM64_V8:
-                cpu = "arm64v8";
+                cpu = @"arm64v8";
                 break;
             case CPU_SUBTYPE_ARM64E:
-                cpu = "arm64e";
+                cpu = @"arm64e";
                 break;
             case CPU_SUBTYPE_X86_64_ALL:
-                cpu = "x86_64";
+                cpu = @"x86_64";
                 break;
             default:
-                cpu = "Unknown";
+                cpu = @"Unknown";
         }
     } else {
         [self exitWithError:nil andMessage:@"Error getting cpu sub-architecture"];
     }
 
-    self->_cpuSubArchitecture = [NSString stringWithCString:cpu encoding:NSUTF8StringEncoding];
+    self->_cpuSubArchitecture = cpu;
 }
 
 - (void)initModel {
