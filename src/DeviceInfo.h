@@ -1,11 +1,5 @@
 #import <Foundation/Foundation.h>
 
-#import <mach-o/arch.h>
-#import <sys/sysctl.h>
-
-#import <sys/utsname.h>
-#import <sys/types.h>
-
 #ifndef PREFIX
     #define PREFIX @""
 #endif

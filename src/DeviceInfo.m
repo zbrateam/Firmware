@@ -1,6 +1,12 @@
 #import "DeviceInfo.h"
 #import "MobileGestalt.h"
 
+#import <mach-o/arch.h>
+#import <sys/sysctl.h>
+
+#import <sys/utsname.h>
+#import <sys/types.h>
+
 @implementation DeviceInfo {
     struct utsname _systemInfo;
     NSString *_model;
@@ -126,7 +132,7 @@
 - (NSString *)getModelName {
     NSRegularExpression *nameRegex = [self regexWithPattern:@"([A-Za-z]+)"];
 
-    NSRange match = [nameRegex firstMatchInString:self->_model options:0 range:NSMakeRange(0, [self->_model length])].range;
+    NSRange match = [nameRegex firstMatchInString:self->_model options:0 range:NSMakeRange(0, self->_model.length)].range;
 
     return [[self->_model substringWithRange:match] lowercaseString];
 }
@@ -134,7 +140,7 @@
 - (NSString *)getModelVersion {
     NSRegularExpression *versionRegex = [self regexWithPattern:@"([0-9]+,[0-9]+)"];
 
-    NSRange match = [versionRegex firstMatchInString:self->_model options:0 range:NSMakeRange(0, [self->_model length])].range;
+    NSRange match = [versionRegex firstMatchInString:self->_model options:0 range:NSMakeRange(0, self->_model.length)].range;
 
     return [[self->_model substringWithRange:match] stringByReplacingOccurrencesOfString:@"," withString:@"."];
 }
@@ -171,11 +177,11 @@
         NSString *value = [gestaltAnswers valueForKey:name];
 
         if (![value isEqualToString:zero]
-            && [numberRegex firstMatchInString:value options:0 range:NSMakeRange(0, [value length])]) {
+            && [numberRegex firstMatchInString:value options:0 range:NSMakeRange(0, value.length)]) {
 
             NSString *modifiedName = [[uppercaseRegex stringByReplacingMatchesInString:name
                                                                                 options:0
-                                                                                range:NSMakeRange(0, [name length])
+                                                                                range:NSMakeRange(0, name.length)
                                                                             withTemplate:template]
                                         lowercaseString];
 

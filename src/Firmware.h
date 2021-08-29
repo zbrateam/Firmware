@@ -1,10 +1,4 @@
 #import <Foundation/Foundation.h>
-#import "DeviceInfo.h"
-
-#import <stdlib.h>
-#import <stdio.h>
-
-#import <spawn.h>
 
 #ifndef MAINTAINER
     #define MAINTAINER @"Steve Jobs <steve@apple.com>"

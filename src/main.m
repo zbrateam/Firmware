@@ -1,6 +1,7 @@
 #import "Firmware.h"
+#import "DeviceInfo.h"
 
-#include <getopt.h>
+#import <getopt.h>
 
 #define FIRMWARE_VERSION 7
 

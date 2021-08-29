@@ -1,5 +1,8 @@
 #import "Firmware.h"
+#import "DeviceInfo.h"
 #import "MobileGestalt.h"
+
+#import <spawn.h>
 
 @implementation Firmware {
     NSString *_dataDirectory;
@@ -10,7 +13,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self->_status = [[NSMutableString alloc] init];
+        self->_status = [NSMutableString new];
         self->_deviceInfo = [DeviceInfo sharedDevice];
         self->_dataDirectory = [self->_deviceInfo getDPKGDataDirectory];
     }
@@ -94,10 +97,10 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         packageList = @"/.\n";
-        pathFormat = @"%@/info/%@.list";
+        pathFormat = [NSString stringWithFormat:@"%@/info/%%@.list", self->_dataDirectory];
     });
 
-    NSString *packageListFile = [NSString stringWithFormat:pathFormat, self->_dataDirectory, package];
+    NSString *packageListFile = [NSString stringWithFormat:pathFormat, package];
 
     NSError *error;
     if (![packageList writeToFile:packageListFile atomically:YES encoding:NSUTF8StringEncoding error:&error]) {
