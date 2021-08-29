@@ -6,7 +6,7 @@ LDID				?= ldid
 DESTDIR				?= out
 
 FIRMWARE_MAINTAINER	?= Zebra Team
-PREFIX                  ?=
+PREFIX              ?=
 
 TARGET_PLATFORM		?= iphoneos
 TARGET_VERSION		?= 11.0
@@ -40,11 +40,3 @@ install::
 
 clean::
 	rm -rf firmware build out
-
-
-# theos subproject compatibilty
-internal-stage:: install
-	@:
-
-internal-after-install::
-	@:
