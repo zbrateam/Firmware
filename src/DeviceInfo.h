@@ -20,7 +20,6 @@
 - (NSString *)getOperatingSystemVersion;    // e.g. 13.3.1
 - (NSString *)getModelName;                 // e.g. iPhone7,1   -> iphone
 - (NSString *)getModelVersion;              // e.g. iPhone7,1   -> 7.1
-- (NSString *)getDebianArchitecture;        // *os-arm or darwin-arm64e
 - (NSString *)getOperatingSystem;           // *os
 - (NSString *)getDPKGDataDirectory;         // /var/lib/dpkg
 - (NSDictionary *)getCapabilities;          // filtered mobile gestalt answers to only include capabilites the device actually has

@@ -116,13 +116,13 @@
                            "Priority: required\n"
                            "Section: System\n"
                            "Installed-Size: 0\n"
-                           "Architecture: %@\n"
+                           "Architecture: all\n"
                            "Version: %%@\n"
                            "Description: %%@\n"
                            "Maintainer: %@\n"
                            "Tag: role::cydia\n"
                            "\n",
-                           [self->_deviceInfo getDebianArchitecture], MAINTAINER];
+                           MAINTAINER];
     });
 
     [self generatePackageListFile:package];
@@ -141,14 +141,14 @@
                            "Priority: required\n"
                            "Section: System\n"
                            "Installed-Size: 0\n"
-                           "Architecture: %@\n"
+                           "Architecture: all\n"
                            "Version: %%@\n"
                            "Description: %%@\n"
                            "Maintainer: %@\n"
                            "Tag: role::cydia\n"
                            "Name: %%@\n"
                            "\n",
-                           [self->_deviceInfo getDebianArchitecture], MAINTAINER];
+                           MAINTAINER];
     });
 
     [self generatePackageListFile:package];
